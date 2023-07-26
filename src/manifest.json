@@ -1,0 +1,10 @@
+{
+  "id": "typora-community-plugin.wikilink",
+  "name": "Wiki link",
+  "description": "Suport wikilink like `[[text]]`.",
+  "author": "plylrnsdy",
+  "authorUrl": "https://github.com/plylrnsdy",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "minCoreVersion": "2.0.0-beta.3"
+}
