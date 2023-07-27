@@ -51,6 +51,7 @@ export class WikilinkSettingTab extends SettingTab {
           el.checked
             ? this.plugin.enableWikilinkInFileExplorer()
             : this.plugin.disableWikilinkInFileExplorer()
+          this.plugin.saveSettings()
         })
       })
     })
