@@ -13,4 +13,4 @@
 
 ## 预览
 
-![](https://fastly.jsdelivr.net/gh/typora-community-plugin/typora-plugin-wikilink@main/docs/assets/base.jpg)
+![](./docs/assets/base.jpg)

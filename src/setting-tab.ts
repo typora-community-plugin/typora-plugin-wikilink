@@ -11,6 +11,10 @@ export class WikilinkSettingTab extends SettingTab {
   i18n = new I18n({
     resources: {
       'en': {
+        useSuggest: {
+          name: 'Use suggestion',
+          desc: 'Input text prefix `[[` to trigger wikilink suggestions.'
+        },
         headingAdditional: 'Additional',
         useInFileExplorer: {
           name: 'Use in file explorer',
@@ -18,6 +22,10 @@ export class WikilinkSettingTab extends SettingTab {
         },
       },
       'zh-cn': {
+        useSuggest: {
+          name: '输入建议',
+          desc: '输入触发字符 `[[` 触发 wikilink 建议。'
+        },
         headingAdditional: '附加功能',
         useInFileExplorer: {
           name: '在文件管理器中使用 Wikilink',
@@ -35,28 +43,46 @@ export class WikilinkSettingTab extends SettingTab {
   }
 
   show() {
+    const { plugin } = this
     const { t } = this.i18n
 
-    this.containerEl.innerHTML = ''
+    this.addSetting(setting => {
+      setting.addName(t.useSuggest.name)
+      setting.addDescription(t.useSuggest.desc)
+      setting.addCheckbox(checkbox => {
+        checkbox.checked = plugin.settings.useSuggest
+        checkbox.onclick = () => {
+          plugin.settings.useSuggest = checkbox.checked
+          checkbox.checked
+            ? plugin._useSuggest.load()
+            : plugin._useSuggest.unload()
+          plugin.saveSettings()
+        }
+      })
+    })
 
     this.addSettingTitle(t.headingAdditional)
     this.addSetting(setting => {
       setting.addName(t.useInFileExplorer.name)
       setting.addDescription(t.useInFileExplorer.desc)
       setting.addCheckbox(checkbox => {
-        checkbox.checked = this.plugin.settings.useInFileExplorer
-        checkbox.addEventListener('click', event => {
-          const el = event.target as HTMLInputElement
-          this.plugin.settings.useInFileExplorer = el.checked
-          el.checked
-            ? this.plugin.enableWikilinkInFileExplorer()
-            : this.plugin.disableWikilinkInFileExplorer()
-          this.plugin.saveSettings()
-        })
+        checkbox.checked = plugin.settings.useInFileExplorer
+        checkbox.onclick = () => {
+          plugin.settings.useInFileExplorer = checkbox.checked
+          checkbox.checked
+            ? plugin.enableWikilinkInFileExplorer()
+            : plugin.disableWikilinkInFileExplorer()
+          plugin.saveSettings()
+        }
       })
     })
 
     super.show()
+  }
+
+  hide() {
+    this.containerEl.innerHTML = ''
+    super.hide()
   }
 
 }

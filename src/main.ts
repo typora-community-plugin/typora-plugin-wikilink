@@ -1,19 +1,22 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as glob from 'glob'
-import { I18n, Plugin, decorate } from '@typora-community-plugin/core'
+import { type App, I18n, Plugin, type PluginManifest, decorate } from '@typora-community-plugin/core'
 import type { DisposeFunc } from '@typora-community-plugin/core/typings/utils/types'
 import { editor, isInputComponent } from 'typora'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
+import { UseSuggest } from './features/suggest'
 
 
 interface WikilinkSettings {
+  useSuggest: boolean
   useInFileExplorer: boolean
 }
 
 const DEFAULT_SETTINGS: WikilinkSettings = {
-  useInFileExplorer: false
+  useSuggest: false,
+  useInFileExplorer: false,
 }
 
 export default class WikilinkPlugin extends Plugin {
@@ -33,15 +36,22 @@ export default class WikilinkPlugin extends Plugin {
 
   settings: WikilinkSettings
 
-  private _cache = new FileCache()
+  cache = new FileCache()
 
   private _linkEl: HTMLAnchorElement
 
+  _useSuggest: UseSuggest
   private _disposeWikilinkInFileExplorer: DisposeFunc
 
-  onload() {
+  constructor(app: App, manifest: PluginManifest) {
+    super(app, manifest)
 
-    this.loadSettings()
+    this._useSuggest = new UseSuggest(this.app, this)
+  }
+
+  async onload() {
+
+    await this.loadSettings()
 
     this.registerSettingTab(new WikilinkSettingTab(this))
 
@@ -97,12 +107,12 @@ export default class WikilinkPlugin extends Plugin {
     }
 
     // feat: support open wikilink
-    this._cache.clear()
+    this.cache.clear()
     this.cacheAllFilePath()
 
     this.register(
       this.app.vault.on('mounted', () =>
-        this._cache = new FileCache()))
+        this.cache = new FileCache()))
 
     this.register(
       decorate(editor, 'tryOpenLink', fn => ($a, param1) => {
@@ -137,7 +147,7 @@ export default class WikilinkPlugin extends Plugin {
       // @ts-ignore
       glob(pattern, opts, (err, files) => {
         if (err) return reject(err)
-        this._cache.bulkAdd(files)
+        this.cache.bulkAdd(files)
         resolve(files.length)
       })
     })
@@ -179,14 +189,14 @@ export default class WikilinkPlugin extends Plugin {
   }
 
   async resolveFilePath(fileName: string) {
-    let filePath = this._cache.match(fileName)
+    let filePath = this.cache.match(fileName)
     if (filePath) {
       try {
         const absFilePath = path.join(this.app.vault.path, filePath)
         fs.accessSync(absFilePath)
         return absFilePath
       } catch (error) {
-        this._cache.remove(filePath)
+        this.cache.remove(filePath)
       }
     }
 
@@ -195,7 +205,7 @@ export default class WikilinkPlugin extends Plugin {
       return
     }
 
-    this._cache.add(filePath)
+    this.cache.add(filePath)
     return path.join(this.app.vault.path, filePath)
   }
 

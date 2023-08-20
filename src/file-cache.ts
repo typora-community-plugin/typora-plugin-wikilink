@@ -1,12 +1,11 @@
+import * as EventEmitter from "events"
+
 
 type FileRecord = { key: string, path: string }
 
-export class FileCache {
+export class FileCache extends EventEmitter {
 
-  db: FileRecord[] = []
-
-  constructor() {
-  }
+  private db: FileRecord[] = []
 
   private findIndex(filePath: string) {
     const key = normalizePath(filePath)
@@ -23,30 +22,41 @@ export class FileCache {
     return this.db.find(o => o.key.startsWith(key))?.path
   }
 
+  matches(partialFilePath = '') {
+    const key = partialFilePath
+    return this.db.filter(o => o.key.startsWith(key))
+  }
+
   add(filePath: string) {
-    return this.db.push({
+    const res = this.db.push({
       key: normalizePath(filePath),
       path: filePath,
     })
+    this.emit('change')
+    return res
   }
 
   bulkAdd(files: string[]) {
-    return this.db.push(
+    const res = this.db.push(
       ...files.map(filePath => ({
         key: normalizePath(filePath),
         path: filePath,
       })))
+    this.emit('change')
+    return res
   }
 
   remove(filePath: string) {
     const i = this.findIndex(filePath)
     if (i !== -1) {
       this.db.slice(i, 1)
+      this.emit('change')
     }
   }
 
   clear() {
-    return this.db = []
+    this.db = []
+    this.emit('change')
   }
 }
 

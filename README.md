@@ -2,7 +2,7 @@
 
 English | [简体中文](https://github.com/typora-community-plugin/typora-plugin-wikilink/blob/main/README.zh-CN.md)
 
-This a plugin example based on [typora-community-plugin](https://github.com/typora-community-plugin/typora-community-plugin) for [Typora](https://typora.io).
+This a plugin based on [typora-community-plugin](https://github.com/typora-community-plugin/typora-community-plugin) for [Typora](https://typora.io).
 
 Suport wikilink like `[[text]]`.
 
@@ -13,4 +13,4 @@ Suport wikilink like `[[text]]`.
 
 ## Preview
 
-![](https://fastly.jsdelivr.net/gh/typora-community-plugin/typora-plugin-wikilink@main/docs/assets/base.jpg)
+![](./docs/assets/base.jpg)

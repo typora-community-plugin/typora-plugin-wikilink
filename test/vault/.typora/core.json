@@ -1,9 +1,15 @@
 {
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.17",
   "settings": {
-    "githubPluginListUri": "jsdelivr",
-    "githubDownloadUri": "ghproxy",
+    "displayLang": "en",
+    "githubProxy": "ghproxy",
+    "showNotSupportedFile": false,
+    "showSearchResultFullPath": false,
     "showRibbon": true,
-    "showFileTabs": true
+    "showFileTabs": true,
+    "openLinkInCurrentWin": true,
+    "quickOpenInCurrentWin": true,
+    "ignoreFile": true,
+    "ignoreFileGlob": ".git"
   }
 }
