@@ -5,8 +5,8 @@ specifiers:
   '@types/jquery': 3.3.1
   '@types/lodash': ~4.14.197
   '@types/node': 16.18.0
-  '@types/typora': npm:@typora-community-plugin/typora-types@^1.0.2
-  '@typora-community-plugin/core': 2.0.0-beta.17
+  '@types/typora': npm:@typora-community-plugin/typora-types@^1.0.3
+  '@typora-community-plugin/core': 2.0.0-beta.19
   archiver: ^5.3.2
   esbuild: ^0.18.20
   esbuild-plugin-typora: npm:@typora-community-plugin/esbuild-plugin-typora@^1.0.5
@@ -17,8 +17,8 @@ devDependencies:
   '@types/jquery': 3.3.1
   '@types/lodash': 4.14.197
   '@types/node': 16.18.0
-  '@types/typora': /@typora-community-plugin/typora-types/1.0.2
-  '@typora-community-plugin/core': 2.0.0-beta.17
+  '@types/typora': /@typora-community-plugin/typora-types/1.0.3
+  '@typora-community-plugin/core': 2.0.0-beta.19
   archiver: 5.3.2
   esbuild: 0.18.20
   esbuild-plugin-typora: /@typora-community-plugin/esbuild-plugin-typora/1.0.5
@@ -253,8 +253,8 @@ packages:
     resolution: {integrity: sha512-LqYqYzYvnbCaQfLAwRt0zboqnsViwhZm+vjaMSqcfN36vulAg7Pt0T83q4WZO2YOBw3XdyHi8cQ88H22zmULOA==}
     dev: true
 
-  /@typora-community-plugin/core/2.0.0-beta.17:
-    resolution: {integrity: sha512-ScoFd5xpvI5s8/HQWFyIHa8oKjjA8siMYgmcpJ49w9IsGBS9JFxc+7E/JS1ZjvDLRTyKYOQjJCFDbRoRK9XWzw==}
+  /@typora-community-plugin/core/2.0.0-beta.19:
+    resolution: {integrity: sha512-GDu4zFUhLyNFOA9ei0KJRNQHVnw3rle8e5NhChZAWpvulBi6u0kvQraUV6bfnhmZ6ArAv6Hl6hIBYjmZvAgUtA==}
     dependencies:
       '@plylrnsdy/decorate.js': 1.0.1
     dev: true
@@ -263,8 +263,8 @@ packages:
     resolution: {integrity: sha512-rBzFMuZk39FwoNEm1jYnDMt3oT6iyZBLwMlTP7hd0LA44CBz1ZEJtC6xuXhOBCcvuYPDbv9jtywbfq4a7BUBSg==}
     dev: true
 
-  /@typora-community-plugin/typora-types/1.0.2:
-    resolution: {integrity: sha512-V0DCfdjvE7PKdstE0KGXKOM94/olF+zBIxAl8WO/jwckJgDvcUs9mBCs4NDRKfe8t7DOlAAh+GYkFzRphYM9PQ==}
+  /@typora-community-plugin/typora-types/1.0.3:
+    resolution: {integrity: sha512-ZPiGIUToqawZDLduriLBVg2jOFExW3a48URMMjR1v/QgkyUFh9NEUsjat2MXJ1xpDr2hF+UpDM99ZEjMTcxr/g==}
     dev: true
 
   /anymatch/3.1.3:

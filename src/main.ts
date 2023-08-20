@@ -1,12 +1,12 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as glob from 'glob'
-import { type App, I18n, Plugin, type PluginManifest, decorate } from '@typora-community-plugin/core'
-import type { DisposeFunc } from '@typora-community-plugin/core/typings/utils/types'
+import { type App, I18n, Plugin, type PluginManifest, decorate, Settings } from '@typora-community-plugin/core'
 import { editor, isInputComponent } from 'typora'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
 import { UseSuggest } from './features/suggest'
+import { UseInFileExplorer } from './features/use-in-file-explorer'
 
 
 interface WikilinkSettings {
@@ -34,31 +34,27 @@ export default class WikilinkPlugin extends Plugin {
     }
   })
 
-  settings: WikilinkSettings
+  settings = new Settings<WikilinkSettings>(this.app, {
+    filename: `data/${this.manifest.id}`,
+    version: 1,
+  })
 
   cache = new FileCache()
 
-  private _linkEl: HTMLAnchorElement
-
-  _useSuggest: UseSuggest
-  private _disposeWikilinkInFileExplorer: DisposeFunc
+  private _useSuggest: UseSuggest
+  private _useInFileExplorer: UseInFileExplorer
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest)
 
+    this.settings.setDefault(DEFAULT_SETTINGS)
     this._useSuggest = new UseSuggest(this.app, this)
+    this._useInFileExplorer = new UseInFileExplorer(this)
   }
 
   async onload() {
 
-    await this.loadSettings()
-
     this.registerSettingTab(new WikilinkSettingTab(this))
-
-    this._linkEl = document.createElement('a')
-    this._linkEl.style.display = 'none'
-
-    document.body.append(this._linkEl)
 
     // feat: parse wikilink
     this.registerMarkdownPreProcessor({
@@ -125,21 +121,6 @@ export default class WikilinkPlugin extends Plugin {
       }))
   }
 
-  onunload() {
-    this._linkEl.remove()
-  }
-
-  async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
-    this.settings.useInFileExplorer
-      ? this.enableWikilinkInFileExplorer()
-      : this.disableWikilinkInFileExplorer()
-  }
-
-  async saveSettings() {
-    await this.saveData(this.settings)
-  }
-
   private cacheAllFilePath() {
     return new Promise((resolve, reject) => {
       const pattern = `**/*{.textbundle/text,}.{md,markdown}`
@@ -173,19 +154,7 @@ export default class WikilinkPlugin extends Plugin {
     }
 
     // handle: anchor
-    setTimeout(() => this._toAnchor(anchor), 500)
-  }
-
-  private _toAnchor(anchor: string) {
-    const tocItem = $(`#outline-content .outline-label:contains("${anchor}")`).get(0)
-
-    if (tocItem) {
-      tocItem.click()
-    }
-    else {
-      this._linkEl.href = `#${anchor}`
-      this._linkEl.click()
-    }
+    setTimeout(() => this.app.openLink('#' + anchor), 500)
   }
 
   async resolveFilePath(fileName: string) {
@@ -235,26 +204,6 @@ export default class WikilinkPlugin extends Plugin {
 
   private relativeFromRoot(filePath: string) {
     return path.relative(this.app.vault.path, filePath)
-  }
-
-  enableWikilinkInFileExplorer() {
-    // feat: support wikilink-style file's shortcut in file explorer
-    this.register(
-      this._disposeWikilinkInFileExplorer = decorate(editor.library, 'openFile',
-        fn => (file, callback) => {
-          const filename = path.basename(file)
-          if (filename.startsWith('[[') && filename.endsWith(']].md')) {
-            this.open(filename.slice(0, -3))
-            return
-          }
-          fn(file, callback)
-        })
-    )
-  }
-
-  disableWikilinkInFileExplorer() {
-    this.unregister(
-      this._disposeWikilinkInFileExplorer)
   }
 }
 

@@ -7,6 +7,16 @@ export class UseSuggest extends Component {
 
   constructor(private app: App, private plugin: WikilinkPlugin) {
     super()
+
+    plugin.settings.get('useSuggest')
+      ? this.load()
+      : this.unload()
+
+    plugin.settings.onChange('useSuggest', (_, isEnabled) => {
+      isEnabled
+        ? this.load()
+        : this.unload()
+    })
   }
 
   onload() {

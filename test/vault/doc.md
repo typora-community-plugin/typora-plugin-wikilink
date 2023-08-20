@@ -1,6 +1,6 @@
 # Doc
 
-[[doc2]]
-
-[[doc3]]
+- [[doc2]] 
+- [[doc2#anchor]] 
+- [[doc3]] 
 

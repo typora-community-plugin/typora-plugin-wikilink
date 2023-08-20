@@ -50,13 +50,9 @@ export class WikilinkSettingTab extends SettingTab {
       setting.addName(t.useSuggest.name)
       setting.addDescription(t.useSuggest.desc)
       setting.addCheckbox(checkbox => {
-        checkbox.checked = plugin.settings.useSuggest
+        checkbox.checked = plugin.settings.get('useSuggest')
         checkbox.onclick = () => {
-          plugin.settings.useSuggest = checkbox.checked
-          checkbox.checked
-            ? plugin._useSuggest.load()
-            : plugin._useSuggest.unload()
-          plugin.saveSettings()
+          plugin.settings.set('useSuggest', checkbox.checked)
         }
       })
     })
@@ -66,13 +62,9 @@ export class WikilinkSettingTab extends SettingTab {
       setting.addName(t.useInFileExplorer.name)
       setting.addDescription(t.useInFileExplorer.desc)
       setting.addCheckbox(checkbox => {
-        checkbox.checked = plugin.settings.useInFileExplorer
+        checkbox.checked = plugin.settings.get('useInFileExplorer')
         checkbox.onclick = () => {
-          plugin.settings.useInFileExplorer = checkbox.checked
-          checkbox.checked
-            ? plugin.enableWikilinkInFileExplorer()
-            : plugin.disableWikilinkInFileExplorer()
-          plugin.saveSettings()
+          plugin.settings.set('useInFileExplorer', checkbox.checked)
         }
       })
     })
