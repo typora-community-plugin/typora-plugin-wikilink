@@ -7,6 +7,13 @@ export class UseSuggest extends Component {
 
   constructor(private app: App, private plugin: WikilinkPlugin) {
     super()
+
+    plugin.register(
+      plugin.settings.onChange('useSuggest', (_, isEnabled) => {
+        isEnabled
+          ? this.load()
+          : this.unload()
+      }))
   }
 
   load() {
@@ -16,13 +23,6 @@ export class UseSuggest extends Component {
 
   onload() {
     const { app, plugin } = this
-
-    this.register(
-      plugin.settings.onChange('useSuggest', (_, isEnabled) => {
-        isEnabled
-          ? this.load()
-          : this.unload()
-      }))
 
     const suggest = new WikilinkSuggest(app, plugin)
 
