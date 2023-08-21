@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as glob from 'glob'
-import { Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
+import { Notice, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
 import { editor } from 'typora'
 import { i18n } from './i18n'
 import { FileCache } from './file-cache'
@@ -81,7 +81,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
   open(wikiLink: string) {
     if (!isWikiLink(wikiLink)) {
-      this.app.workspace.notification.show(`wiki-link should be sourrounded by '[[' and ']]' !`)
+      new Notice(this.i18n.t.notWikilink)
       return
     }
 
@@ -139,7 +139,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
         })
         .on('end', (matches: string[]) => {
           if (matches.length === 0) {
-            this.app.workspace.notification.show(this.i18n.t.notSuchFile + fileName)
+            new Notice(this.i18n.t.notSuchFile + fileName)
             return reject()
           }
           resolve(matches[0])

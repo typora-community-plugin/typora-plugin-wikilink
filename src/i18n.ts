@@ -5,6 +5,7 @@ export const i18n = new I18n({
   resources: {
     'en': {
       commandToggle: 'Toggle Focused/Selected Text Wikilink Style',
+      notWikilink: 'Wikilink should be sourrounded by `[[` and `]]` !',
       notSuchFile: 'Can not found the file: ',
       useSuggest: {
         name: 'Use suggestion',
@@ -18,6 +19,7 @@ export const i18n = new I18n({
     },
     'zh-cn': {
       commandToggle: '切换 Wikilink 样式',
+      notWikilink: 'Wikilink 应该使用 `[[` 和 `]]` 包围！',
       notSuchFile: '找不到文件: ',
       useSuggest: {
         name: '输入建议',
