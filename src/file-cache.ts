@@ -1,9 +1,13 @@
-import * as EventEmitter from "events"
+import { Events } from "@typora-community-plugin/core"
 
+
+type FileCacheEvents = {
+  'change'(): void
+}
 
 type FileRecord = { key: string, path: string }
 
-export class FileCache extends EventEmitter {
+export class FileCache extends Events<FileCacheEvents> {
 
   private db: FileRecord[] = []
 

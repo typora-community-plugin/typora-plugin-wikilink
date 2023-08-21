@@ -7,22 +7,30 @@ export class UseSuggest extends Component {
 
   constructor(private app: App, private plugin: WikilinkPlugin) {
     super()
+  }
 
-    plugin.settings.get('useSuggest')
-      ? this.load()
-      : this.unload()
-
-    plugin.settings.onChange('useSuggest', (_, isEnabled) => {
-      isEnabled
-        ? this.load()
-        : this.unload()
-    })
+  load() {
+    if (!this.plugin.settings.get('useSuggest')) return
+    super.load()
   }
 
   onload() {
+    const { app, plugin } = this
+
     this.register(
-      this.app.workspace.activeEditor.suggestion.register(
-        new WikilinkSuggest(this.app, this.plugin)))
+      plugin.settings.onChange('useSuggest', (_, isEnabled) => {
+        isEnabled
+          ? this.load()
+          : this.unload()
+      }))
+
+    const suggest = new WikilinkSuggest(app, plugin)
+
+    this.register(
+      app.workspace.activeEditor.suggestion.register(suggest))
+
+    this.register(
+      plugin.cache.on('change', () => suggest.loadSuggestions()))
   }
 }
 
@@ -36,10 +44,9 @@ class WikilinkSuggest extends EditorSuggest<string> {
     super()
 
     this.loadSuggestions()
-    plugin.cache.on('change', () => this.loadSuggestions())
   }
 
-  private loadSuggestions = _.debounce(this._loadSuggestions, 1e3)
+  loadSuggestions = _.debounce(this._loadSuggestions, 1e3)
 
   private _loadSuggestions() {
     this.suggestionKeys = this.plugin.cache.matches('')

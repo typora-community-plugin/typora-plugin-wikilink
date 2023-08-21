@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as glob from 'glob'
-import { type App, I18n, Plugin, type PluginManifest, decorate, Settings } from '@typora-community-plugin/core'
+import { I18n, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
 import { editor, isInputComponent } from 'typora'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
@@ -19,7 +19,7 @@ const DEFAULT_SETTINGS: WikilinkSettings = {
   useInFileExplorer: false,
 }
 
-export default class WikilinkPlugin extends Plugin {
+export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
   i18n = new I18n({
     resources: {
@@ -34,25 +34,19 @@ export default class WikilinkPlugin extends Plugin {
     }
   })
 
-  settings = new Settings<WikilinkSettings>(this.app, {
-    filename: `data/${this.manifest.id}`,
-    version: 1,
-  })
-
   cache = new FileCache()
 
-  private _useSuggest: UseSuggest
-  private _useInFileExplorer: UseInFileExplorer
+  async onload() {
 
-  constructor(app: App, manifest: PluginManifest) {
-    super(app, manifest)
+    this.registerSettings(
+      new PluginSettings(this.app, this.manifest, {
+        version: 1,
+      }))
 
     this.settings.setDefault(DEFAULT_SETTINGS)
-    this._useSuggest = new UseSuggest(this.app, this)
-    this._useInFileExplorer = new UseInFileExplorer(this)
-  }
 
-  async onload() {
+    this.addChild(new UseSuggest(this.app, this))
+    this.addChild(new UseInFileExplorer(this))
 
     this.registerSettingTab(new WikilinkSettingTab(this))
 
@@ -107,8 +101,10 @@ export default class WikilinkPlugin extends Plugin {
     this.cacheAllFilePath()
 
     this.register(
-      this.app.vault.on('mounted', () =>
-        this.cache = new FileCache()))
+      this.app.vault.on('mounted', () => {
+        this.cache.clear()
+        this.cacheAllFilePath()
+      }))
 
     this.register(
       decorate(editor, 'tryOpenLink', fn => ($a, param1) => {
