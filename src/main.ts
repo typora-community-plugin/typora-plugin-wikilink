@@ -2,12 +2,14 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as glob from 'glob'
 import { I18n, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
-import { editor, isInputComponent } from 'typora'
+import { editor } from 'typora'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
 import { WikilinkRenderer } from './features/renderer'
+import { WikilinkStyleToggler } from './features/style-toggler'
 import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
+import { isWikiLink } from './utils'
 
 
 interface WikilinkSettings {
@@ -47,40 +49,11 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     this.settings.setDefault(DEFAULT_SETTINGS)
 
     this.addChild(new WikilinkRenderer(this))
+    this.addChild(new WikilinkStyleToggler(this))
     this.addChild(new UseSuggest(this.app, this))
     this.addChild(new UseInFileExplorer(this))
 
     this.registerSettingTab(new WikilinkSettingTab(this))
-
-    // feat: wrap/unwrap text with `[[` and `]]`
-    this.registerCommand({
-      id: 'toggle-style',
-      title: this.i18n.t.commandToggle,
-      scope: 'editor',
-      hotkey: 'Alt+Ctrl+K',
-      callback: toggleWikilink,
-    })
-    function toggleWikilink() {
-      if (isInputComponent(document.activeElement)) return
-
-      const selected = document.getSelection()!.anchorNode!.parentElement!.parentElement
-      if (
-        isWikiLinkEl(selected) ||
-        isWikiLinkEl(selected!.children[1] as HTMLElement)
-      ) {
-        editor.selection.selectPhrase()
-        const selectedText = document.getSelection()!.toString()
-        const [, text] = selectedText.match(/<a>\[\[([^<]+)\]\]<\/a>/) ?? []
-        editor.UserOp.pasteHandler(editor, text, false)
-      }
-      else {
-        const range = editor.selection.getRangy()
-        if (range.collapsed) editor.selection.selectWord()
-        const selectedText = document.getSelection()!.toString()
-        const html = `<a>[[${selectedText}]]</a>`
-        editor.UserOp.pasteHandler(editor, html, true)
-      }
-    }
 
     // feat: support open wikilink
     this.cache.clear()
@@ -188,12 +161,3 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     return path.relative(this.app.vault.path, filePath)
   }
 }
-
-function isWikiLinkEl(el: HTMLElement | null) {
-  return el && el.tagName === 'A' && isWikiLink(el.innerText)
-}
-
-function isWikiLink(text: string) {
-  return text.startsWith('[[') && text.endsWith(']]')
-}
-
