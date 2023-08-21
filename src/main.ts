@@ -1,8 +1,9 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as glob from 'glob'
-import { I18n, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
+import { Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
 import { editor } from 'typora'
+import { i18n } from './i18n'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
 import { WikilinkRenderer } from './features/renderer'
@@ -24,18 +25,7 @@ const DEFAULT_SETTINGS: WikilinkSettings = {
 
 export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
-  i18n = new I18n({
-    resources: {
-      'en': {
-        commandToggle: 'Toggle Focused/Selected Text Wikilink Style',
-        notSuchFile: 'Can not found the file: ',
-      },
-      'zh-cn': {
-        commandToggle: '切换 Wikilink 样式',
-        notSuchFile: '找不到文件: ',
-      },
-    }
-  })
+  i18n = i18n
 
   cache = new FileCache()
 
