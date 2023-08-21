@@ -5,7 +5,8 @@ import { I18n, Plugin, PluginSettings, decorate } from '@typora-community-plugin
 import { editor, isInputComponent } from 'typora'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
-import { UseSuggest } from './features/suggest'
+import { WikilinkRenderer } from './features/renderer'
+import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
 
 
@@ -45,26 +46,11 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
     this.settings.setDefault(DEFAULT_SETTINGS)
 
+    this.addChild(new WikilinkRenderer(this))
     this.addChild(new UseSuggest(this.app, this))
     this.addChild(new UseInFileExplorer(this))
 
     this.registerSettingTab(new WikilinkSettingTab(this))
-
-    // feat: parse wikilink
-    this.registerMarkdownPreProcessor({
-      when: 'preload',
-      type: 'mdtext',
-      process: md =>
-        md.replace(/(?<!\<a>)(\[\[[^\]]+\]\])(?!\<\/a>)/g, '<a>$1</a>')
-          .replace(/(\^\w{6})(?=\n|$)/g, '<a name="$1">$1</a>')
-    })
-    this.registerMarkdownPreProcessor({
-      when: 'presave',
-      type: 'mdtext',
-      process: md =>
-        md.replace(/<a>(\[\[[^\]]+\]\])<\/a>/g, '$1')
-          .replace(/<a name="(\^\w{6})">\1<\/a>/g, '$1')
-    })
 
     // feat: wrap/unwrap text with `[[` and `]]`
     this.registerCommand({
