@@ -1,3 +1,4 @@
+import * as _ from "lodash"
 import { Events } from "@typora-community-plugin/core"
 
 
@@ -9,57 +10,69 @@ type FileRecord = { key: string, path: string }
 
 export class FileCache extends Events<FileCacheEvents> {
 
-  private db: FileRecord[] = []
+  private map: Record<string, FileRecord> = {}
+  private arr: FileRecord[] = []
 
   private findIndex(filePath: string) {
     const key = normalizePath(filePath)
-    return this.db.findIndex(o => o.key.startsWith(key))
+    return this.arr.findIndex(o => o.key.startsWith(key))
   }
 
   has(filePath: string) {
-    const key = normalizePath(filePath)
-    return !!this.db.find(o => o.key.startsWith(key))
+    return !!this.match(filePath)
   }
 
   match(partialFilePath: string) {
     const key = normalizePath(partialFilePath)
-    return this.db.find(o => o.key.startsWith(key))?.path
+    return this.arr.find(o => o.key.startsWith(key))?.path
   }
 
   matches(partialFilePath = '') {
     const key = partialFilePath
-    return this.db.filter(o => o.key.startsWith(key))
+    return this.arr.filter(o => o.key.startsWith(key))
   }
 
-  add(filePath: string) {
-    const res = this.db.push({
-      key: normalizePath(filePath),
-      path: filePath,
-    })
-    this.emit('change')
-    return res
+  add(filePath: string, emitEvent = true) {
+    const key = normalizePath(filePath)
+
+    if (!this.map[key]) {
+      const record = {
+        key,
+        path: filePath,
+      }
+      this.map[key] = record
+      this.arr.push(record)
+
+      emitEvent && this.emit('change')
+      return true
+    }
+
+    return false
   }
 
   bulkAdd(files: string[]) {
-    const res = this.db.push(
-      ...files.map(filePath => ({
-        key: normalizePath(filePath),
-        path: filePath,
-      })))
+    const count = files.map(filePath => this.add(filePath))
+      .filter(_.identity)
+      .length
+
     this.emit('change')
-    return res
+    return count
   }
 
   remove(filePath: string) {
+    const key = normalizePath(filePath)
+    if (!this.map[key]) return
+
+    delete this.map[key]
+
     const i = this.findIndex(filePath)
-    if (i !== -1) {
-      this.db.slice(i, 1)
-      this.emit('change')
-    }
+    this.arr.slice(i, 1)
+
+    this.emit('change')
   }
 
   clear() {
-    this.db = []
+    this.arr = []
     this.emit('change')
   }
 }
