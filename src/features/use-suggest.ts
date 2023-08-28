@@ -63,9 +63,17 @@ class WikilinkSuggest extends EditorSuggest<string> {
   }
 
   getSuggestions(query: string) {
+    if (!query) return this.suggestionKeys
+
     query = query.toLowerCase()
+    const cache: Record<string, number> = {}
     return this.suggestionKeys
-      .filter(n => n.toLowerCase().includes(query))
+      .filter(n => {
+        cache[n] = n.toLowerCase().indexOf(query)
+        return cache[n] !== -1
+      })
+      .sort((a, b) => cache[a] - cache[b] || a.length - b.length)
+      .slice(0, 50)
   }
 
   beforeApply(suggest: string) {
