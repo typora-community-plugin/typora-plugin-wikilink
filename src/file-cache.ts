@@ -66,7 +66,7 @@ export class FileCache extends Events<FileCacheEvents> {
     delete this.map[key]
 
     const i = this.findIndex(filePath)
-    this.arr.slice(i, 1)
+    this.arr.splice(i, 1)
 
     this.emit('change')
   }
