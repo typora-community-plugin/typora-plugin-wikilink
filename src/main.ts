@@ -1,3 +1,4 @@
+import * as glob from 'glob'
 import * as path from 'path'
 import { Notice, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
 import { editor } from 'typora'
@@ -45,11 +46,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     this.registerSettingTab(new WikilinkSettingTab(this))
 
 
-    this.register(
-      decorate.afterCall(editor.quickOpenPanel, 'initFileCache', ([paths]) => {
-        const prefixLen = this.app.vault.path.length
-        this.cache.bulkAdd(paths.map(p => p.slice(prefixLen + 1)))
-      }))
+    this.cacheAllFiles()
 
     this.register(
       decorate.afterCall(editor.quickOpenPanel, 'addInitFiles', ([paths]) => {
@@ -63,13 +60,12 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
         this.cache.remove(path.slice(prefixLen + 1))
       }))
 
-    editor.quickOpenPanel.cacheFolder(this.app.vault.path)
-
     this.cache.clear()
 
     this.register(
       this.app.vault.on('mounted', () => {
         this.cache.clear()
+        this.cacheAllFiles()
       }))
 
 
@@ -83,6 +79,19 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
         return fn($a, param1)
       }))
+  }
+
+  private cacheAllFiles() {
+    return new Promise((resolve, reject) => {
+      const pattern = `**/*{.textbundle/text,}.{md,markdown}`
+      const opts = { cwd: this.app.vault.path, nodir: true }
+      // @ts-ignore
+      glob(pattern, opts, (err, files) => {
+        if (err) return reject(err)
+        this.cache.bulkAdd(files)
+        resolve(files.length)
+      })
+    })
   }
 
   open(wikiLink: string) {
