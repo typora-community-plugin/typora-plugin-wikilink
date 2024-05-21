@@ -1,4 +1,3 @@
-import * as _ from "lodash"
 import { Events } from "@typora-community-plugin/core"
 
 
@@ -52,7 +51,7 @@ export class FileCache extends Events<FileCacheEvents> {
 
   bulkAdd(files: string[]) {
     const count = files.map(filePath => this.add(filePath))
-      .filter(_.identity)
+      .filter(isSuccess => isSuccess)
       .length
 
     this.emit('change')

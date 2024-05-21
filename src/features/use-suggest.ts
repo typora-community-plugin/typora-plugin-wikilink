@@ -1,5 +1,4 @@
-import * as _ from "lodash"
-import { type App, Component, TextSuggest } from "@typora-community-plugin/core"
+import { type App, Component, debounce, TextSuggest } from "@typora-community-plugin/core"
 import type WikilinkPlugin from "../main"
 
 
@@ -46,7 +45,7 @@ class WikilinkSuggest extends TextSuggest {
     this.loadSuggestions()
   }
 
-  loadSuggestions = _.debounce(this._loadSuggestions, 1e3)
+  loadSuggestions = debounce(this._loadSuggestions, 1e3)
 
   private _loadSuggestions() {
     this.suggestions = this.plugin.cache.matches('')

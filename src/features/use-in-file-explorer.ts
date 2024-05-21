@@ -1,5 +1,4 @@
-import * as path from "path"
-import { Component, decorate } from "@typora-community-plugin/core"
+import { Component, decorate, path } from "@typora-community-plugin/core"
 import { editor } from "typora"
 import type WikilinkPlugin from "../main"
 

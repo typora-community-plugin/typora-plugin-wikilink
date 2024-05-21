@@ -1,6 +1,6 @@
+import './style.scss'
 import * as glob from 'glob'
-import * as path from 'path'
-import { Notice, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
+import { Notice, path, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
 import { editor } from 'typora'
 import { i18n } from './i18n'
 import { FileCache } from './file-cache'
