@@ -50,7 +50,7 @@ export class FileCache extends Events<FileCacheEvents> {
   }
 
   bulkAdd(files: string[]) {
-    const count = files.map(filePath => this.add(filePath))
+    const count = files.map(filePath => this.add(filePath, false))
       .filter(isSuccess => isSuccess)
       .length
 
