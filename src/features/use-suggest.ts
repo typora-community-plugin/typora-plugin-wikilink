@@ -45,7 +45,7 @@ class WikilinkSuggest extends TextSuggest {
     this.loadSuggestions()
   }
 
-  loadSuggestions = debounce(this._loadSuggestions, 1e3)
+  loadSuggestions = debounce(() => this._loadSuggestions(), 1e3)
 
   private _loadSuggestions() {
     this.suggestions = this.plugin.cache.matches('')
