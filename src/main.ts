@@ -1,7 +1,6 @@
 import './style.scss'
-import * as glob from 'glob'
 import { Notice, path, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
-import { editor } from 'typora'
+import { editor, reqnode } from 'typora'
 import { i18n } from './i18n'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
@@ -10,6 +9,8 @@ import { WikilinkStyleToggler } from './features/style-toggler'
 import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
 import { isWikiLink } from './utils'
+
+const glob = reqnode('fs-plus/node_modules/glob')
 
 
 interface WikilinkSettings {
