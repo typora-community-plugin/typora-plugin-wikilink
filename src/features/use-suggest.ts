@@ -29,7 +29,7 @@ export class UseSuggest extends Component {
       app.workspace.activeEditor.suggestion.register(suggest))
 
     this.register(
-      plugin.cache.on('change', () => suggest.loadSuggestions()))
+      plugin.cacher.on('change', () => suggest.loadSuggestions()))
   }
 }
 
@@ -48,7 +48,7 @@ class WikilinkSuggest extends TextSuggest {
   loadSuggestions = debounce(() => this._loadSuggestions(), 1e3)
 
   private _loadSuggestions() {
-    this.suggestions = this.plugin.cache.matches('')
+    this.suggestions = this.plugin.cacher.matches('')
       .filter(o => !o.key.startsWith('[['))
       .map(o => o.key.split('/')[0])
   }

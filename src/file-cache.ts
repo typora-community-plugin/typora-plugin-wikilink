@@ -1,4 +1,7 @@
-import { Events } from "@typora-community-plugin/core"
+import { reqnode } from "typora"
+import { app, Events } from "@typora-community-plugin/core"
+
+const glob = reqnode('fs-plus/node_modules/glob')
 
 
 type FileCacheEvents = {
@@ -11,6 +14,19 @@ export class FileCache extends Events<FileCacheEvents> {
 
   private map: Record<string, FileRecord> = {}
   private arr: FileRecord[] = []
+
+  startCache() {
+    return new Promise((resolve, reject) => {
+      const pattern = `**/*{.textbundle/text,}.{md,markdown}`
+      const opts = { cwd: app.vault.path, nodir: true }
+      // @ts-ignore
+      glob(pattern, opts, (err, files) => {
+        if (err) return reject(err)
+        this.bulkAdd(files)
+        resolve(files.length)
+      })
+    })
+  }
 
   private findIndex(filePath: string) {
     const key = normalizePath(filePath)

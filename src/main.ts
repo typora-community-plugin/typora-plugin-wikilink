@@ -10,8 +10,6 @@ import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
 import { isWikiLink } from './utils'
 
-const glob = reqnode('fs-plus/node_modules/glob')
-
 
 interface WikilinkSettings {
   useSuggest: boolean
@@ -27,7 +25,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
   i18n = i18n
 
-  cache = new FileCache()
+  cacher = new FileCache()
 
   async onload() {
 
@@ -47,26 +45,26 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     this.registerSettingTab(new WikilinkSettingTab(this))
 
 
-    this.cacheAllFiles()
+    this.cacher.startCache()
 
     this.register(
       decorate.afterCall(editor.quickOpenPanel, 'addInitFiles', ([paths]) => {
         const prefixLen = this.app.vault.path.length
-        this.cache.bulkAdd(paths.map(p => p.slice(prefixLen + 1)))
+        this.cacher.bulkAdd(paths.map(p => p.slice(prefixLen + 1)))
       }))
 
     this.register(
       decorate.afterCall(editor.quickOpenPanel, 'removeInitFiles', ([path]) => {
         const prefixLen = this.app.vault.path.length
-        this.cache.remove(path.slice(prefixLen + 1))
+        this.cacher.remove(path.slice(prefixLen + 1))
       }))
 
-    this.cache.clear()
+    this.cacher.clear()
 
     this.register(
       this.app.vault.on('mounted', () => {
-        this.cache.clear()
-        this.cacheAllFiles()
+        this.cacher.clear()
+        this.cacher.startCache()
       }))
 
 
@@ -82,19 +80,6 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
       }))
   }
 
-  private cacheAllFiles() {
-    return new Promise((resolve, reject) => {
-      const pattern = `**/*{.textbundle/text,}.{md,markdown}`
-      const opts = { cwd: this.app.vault.path, nodir: true }
-      // @ts-ignore
-      glob(pattern, opts, (err, files) => {
-        if (err) return reject(err)
-        this.cache.bulkAdd(files)
-        resolve(files.length)
-      })
-    })
-  }
-
   open(wikiLink: string) {
     if (!isWikiLink(wikiLink)) {
       new Notice(this.i18n.t.notWikilink)
@@ -108,7 +93,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
     // handle: fileName
     if (file) {
-      const filepath = this.cache.match(file)
+      const filepath = this.cacher.match(file)
       if (filepath) {
         editor.library.openFile(path.join(this.app.vault.path, filepath))
       }
