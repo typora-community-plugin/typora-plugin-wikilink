@@ -1,0 +1,14 @@
+{
+  "commandToggle": "Wikilink-Format des fokussierten/ausgewählten Textes umschalten",
+  "notWikilink": "Ein Wikilink muss mit `[[` und `]]` eingerahmt sein!",
+  "notSuchFile": "Datei nicht gefunden: ",
+  "useSuggest": {
+    "name": "Vorschlag einblenden",
+    "desc": "Begib den Text mit `[[`, um Wikilink-Vorschläge auszulösen."
+  },
+  "headingAdditional": "Zusatzfunktionen",
+  "useInFileExplorer": {
+    "name": "Im Dateimanager verwenden",
+    "desc": "Klicke auf die Datei `[[name]].md`, um `name.md` zu öffnen"
+  }
+}
