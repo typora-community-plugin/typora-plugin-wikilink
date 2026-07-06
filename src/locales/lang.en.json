@@ -1,0 +1,14 @@
+{
+  "commandToggle": "Toggle Focused/Selected Text Wikilink Style",
+  "notWikilink": "Wikilink should be sourrounded by `[[` and `]]` !",
+  "notSuchFile": "Can not found the file: ",
+  "useSuggest": {
+    "name": "Use suggestion",
+    "desc": "Input text prefix `[[` to trigger wikilink suggestions."
+  },
+  "headingAdditional": "Additional",
+  "useInFileExplorer": {
+    "name": "Use in file explorer",
+    "desc": "Click file `[[name]].md` will open `name.md`"
+  }
+}

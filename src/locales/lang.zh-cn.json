@@ -1,0 +1,14 @@
+{
+  "commandToggle": "切换 Wikilink 样式",
+  "notWikilink": "Wikilink 应该使用 `[[` 和 `]]` 包围！",
+  "notSuchFile": "找不到文件: ",
+  "useSuggest": {
+    "name": "输入建议",
+    "desc": "输入触发字符 `[[` 触发 wikilink 建议。"
+  },
+  "headingAdditional": "附加功能",
+  "useInFileExplorer": {
+    "name": "在文件管理器中使用 Wikilink",
+    "desc": "点击文件 `[[name]].md` 将会打开 `name.md`"
+  }
+}
