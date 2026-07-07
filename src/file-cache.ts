@@ -1,7 +1,5 @@
-import { reqnode } from "typora"
-import { app, Events } from "@typora-community-plugin/core"
-
-const glob = reqnode('fs-plus/node_modules/glob')
+import { bridge, File, reqnode } from "typora"
+import { app, Events, path } from "@typora-community-plugin/core"
 
 
 type FileCacheEvents = {
@@ -16,16 +14,11 @@ export class FileCache extends Events<FileCacheEvents> {
   private arr: FileRecord[] = []
 
   startCache() {
-    return new Promise((resolve, reject) => {
-      const pattern = `**/*{.textbundle/text,}.{md,markdown}`
-      const opts = { cwd: app.vault.path, nodir: true }
-      // @ts-ignore
-      glob(pattern, opts, (err, files) => {
-        if (err) return reject(err)
+    return (File.isNode ? findFilesOnNode() : findFilesOnDarwin())
+      .then(files => {
         this.bulkAdd(files)
-        resolve(files.length)
+        return files.length
       })
-    })
   }
 
   private findIndex(filePath: string) {
@@ -97,4 +90,49 @@ function normalizePath(filePath: string) {
   return filePath
     .replace(/(?:\.textbundle[\\\/]text)?\.(?:md|markdown)$/, '')
     .split(/[\\\/]/).reverse().join('/') + '/'
+}
+
+function findFilesOnNode(): Promise<string[]> {
+  const glob = reqnode('fs-plus/node_modules/glob')
+  return new Promise((resolve, reject) => {
+    const pattern = `**/*.{md,markdown}`
+    const opts = { cwd: app.vault.path, nodir: true }
+    // @ts-ignore
+    glob(pattern, opts, (err, files: string[]) => {
+      if (err) return reject(err)
+      resolve(files)
+    })
+  })
+}
+
+async function findFilesOnDarwin() {
+  const dirs = [app.vault.path]
+  const files = []
+
+  while (dirs.length) {
+    const currentDir = dirs.pop()!
+    const subdirs = await listDirsOnDarwin(currentDir)
+    const docs = await listDocsOnDarwin(currentDir)
+    dirs.push(...subdirs)
+    files.push(...docs.map(file => path.relative(app.vault.path, file)))
+  }
+
+  return files
+}
+
+
+function listDirsOnDarwin(dirpath: string): Promise<string[]> {
+  return new Promise(resolve => {
+    bridge.callHandler('library.listDocsUnder', dirpath, (file) => {
+      resolve(file.subdir.map((file) => file.path))
+    })
+  })
+}
+
+function listDocsOnDarwin(dirpath: string): Promise<string[]> {
+  return new Promise(resolve => {
+    bridge.callHandler('library.listDocsUnder', dirpath, (file) => {
+      resolve(file.content.map((file) => file.path))
+    })
+  })
 }

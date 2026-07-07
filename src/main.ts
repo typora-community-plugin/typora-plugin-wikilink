@@ -1,6 +1,6 @@
 import './style.scss'
 import { Notice, path, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
-import { editor, reqnode } from 'typora'
+import { editor } from 'typora'
 import { i18n } from './i18n'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
@@ -45,8 +45,12 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     this.registerSettingTab(new WikilinkSettingTab(this))
 
 
+    this.cacher.clear()
+
+    // handle: update all
     this.cacher.startCache()
 
+    // handle: update part
     this.register(
       decorate.afterCall(editor.quickOpenPanel, 'addInitFiles', ([paths]) => {
         const prefixLen = this.app.vault.path.length
@@ -58,8 +62,6 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
         const prefixLen = this.app.vault.path.length
         this.cacher.remove(path.slice(prefixLen + 1))
       }))
-
-    this.cacher.clear()
 
     this.register(
       this.app.vault.on('mounted', () => {
