@@ -1,7 +1,6 @@
 import './style.scss'
-import { Notice, path, Plugin, PluginSettings, decorate } from '@typora-community-plugin/core'
+import { Notice, path, Plugin, PluginSettings, decorate, I18n } from '@typora-community-plugin/core'
 import { editor } from 'typora'
-import { i18n } from './i18n'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
 import { WikilinkRenderer } from './features/renderer'
@@ -9,6 +8,7 @@ import { WikilinkStyleToggler } from './features/style-toggler'
 import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
 import { isWikiLink } from './utils'
+import Locale from './locales/lang.en.json'
 
 
 interface WikilinkSettings {
@@ -23,7 +23,9 @@ const DEFAULT_SETTINGS: WikilinkSettings = {
 
 export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
-  i18n = i18n
+  i18n = new I18n<typeof Locale>({
+    localePath: path.join(this.manifest.dir!, 'locales'),
+  })
 
   cacher = new FileCache()
 
