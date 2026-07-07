@@ -46,11 +46,24 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
     this.registerSettingTab(new WikilinkSettingTab(this))
 
-
-    this.cacher.clear()
-
     // handle: update all
-    this.cacher.startCache()
+    if (this.app.internalPlugins.enabledPlugins["internal.metadata"]) {
+      this.register(
+        this.app.metadata.on('index:done', () => {
+          this.cacher.clear()
+          this.cacher.startCache()
+        }))
+    }
+    else {
+      this.cacher.clear()
+      this.cacher.startCache()
+
+      this.register(
+        this.app.vault.on('mounted', () => {
+          this.cacher.clear()
+          this.cacher.startCache()
+        }))
+    }
 
     // handle: update part
     this.register(
@@ -64,13 +77,6 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
         const prefixLen = this.app.vault.path.length
         this.cacher.remove(path.slice(prefixLen + 1))
       }))
-
-    this.register(
-      this.app.vault.on('mounted', () => {
-        this.cacher.clear()
-        this.cacher.startCache()
-      }))
-
 
     // feat: support open wikilink
     this.register(

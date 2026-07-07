@@ -14,10 +14,15 @@ export class FileCache extends Events<FileCacheEvents> {
   private arr: FileRecord[] = []
 
   startCache() {
-    return (File.isNode ? findFilesOnNode() : findFilesOnDarwin())
-      .then(files => {
-        this.bulkAdd(files)
-        return files.length
+    return Promise.resolve(Object.keys(app.metadata.cache))
+      .then(files => files.length > 0
+        ? files
+        : (File.isNode
+          ? listVaultFilesOnNode()
+          : listVaultFilesOnDarwin()))
+      .then(fallbackFiles => {
+        this.bulkAdd(fallbackFiles)
+        return fallbackFiles.length
       })
   }
 
@@ -92,7 +97,7 @@ function normalizePath(filePath: string) {
     .split(/[\\\/]/).reverse().join('/') + '/'
 }
 
-function findFilesOnNode(): Promise<string[]> {
+function listVaultFilesOnNode(): Promise<string[]> {
   const glob = reqnode('fs-plus/node_modules/glob')
   return new Promise((resolve, reject) => {
     const pattern = `**/*.{md,markdown}`
@@ -105,14 +110,13 @@ function findFilesOnNode(): Promise<string[]> {
   })
 }
 
-async function findFilesOnDarwin() {
+async function listVaultFilesOnDarwin() {
   const dirs = [app.vault.path]
   const files = []
 
   while (dirs.length) {
     const currentDir = dirs.pop()!
-    const subdirs = await listDirsOnDarwin(currentDir)
-    const docs = await listDocsOnDarwin(currentDir)
+    const [subdirs, docs] = await listOnDarwin(currentDir)
     dirs.push(...subdirs)
     files.push(...docs.map(file => path.relative(app.vault.path, file)))
   }
@@ -120,19 +124,13 @@ async function findFilesOnDarwin() {
   return files
 }
 
-
-function listDirsOnDarwin(dirpath: string): Promise<string[]> {
+function listOnDarwin(dirpath: string): Promise<[string[], string[]]> {
   return new Promise(resolve => {
     bridge.callHandler('library.listDocsUnder', dirpath, (file) => {
-      resolve(file.subdir.map((file) => file.path))
-    })
-  })
-}
-
-function listDocsOnDarwin(dirpath: string): Promise<string[]> {
-  return new Promise(resolve => {
-    bridge.callHandler('library.listDocsUnder', dirpath, (file) => {
-      resolve(file.content.map((file) => file.path))
+      resolve([
+        file.subdir.map((file) => file.path),
+        file.content.map((file) => file.path),
+      ])
     })
   })
 }
