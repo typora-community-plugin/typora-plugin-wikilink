@@ -48,8 +48,8 @@ importers:
         specifier: npm:@typora-community-plugin/typora-types@^1.0.11
         version: '@typora-community-plugin/typora-types@1.0.16'
       '@typora-community-plugin/core':
-        specifier: ^2.9.6
-        version: 2.9.6
+        specifier: ^2.9.13
+        version: 2.9.13
       archiver:
         specifier: ^5.3.2
         version: 5.3.2
@@ -1050,8 +1050,8 @@ packages:
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
 
-  '@typora-community-plugin/core@2.9.6':
-    resolution: {integrity: sha512-i062yebc7KAIXIy+s5UTMeMLVSU9Zr1WO+PsmJrKR278ZpTBZAWVlFQMMxY7kLey2UtLUJa6I4AsXrlreeUsrw==}
+  '@typora-community-plugin/core@2.9.13':
+    resolution: {integrity: sha512-eNWxHzHQydOxqyOmC2Gh0krn60vt7MmrTrsYgxZ0oOz21PEp+QSMXDlGeps5Jt/k1ChSNXkhR7Z6DsnL47BQgg==}
 
   '@typora-community-plugin/esbuild-plugin-typora@1.0.12':
     resolution: {integrity: sha512-iOEM8e0Y7/83dqVHm2HX9XglL0BD0t4NTbH4PKtea7ohrOxI/frkWb4nHW4iMoxp5mVBdCf5QUpcm3H6DeIfdQ==}
@@ -2506,7 +2506,7 @@ snapshots:
 
   '@types/resolve@1.20.2': {}
 
-  '@typora-community-plugin/core@2.9.6':
+  '@typora-community-plugin/core@2.9.13':
     dependencies:
       '@plylrnsdy/decorate.js': 1.0.4
 
