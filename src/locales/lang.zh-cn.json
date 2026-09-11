@@ -10,5 +10,9 @@
   "useInFileExplorer": {
     "name": "在文件管理器中使用 Wikilink",
     "desc": "点击文件 `[[name]].md` 将会打开 `name.md`"
+  },
+  "useFloatingView": {
+    "name": "浮动窗口预览",
+    "desc": "按住 Ctrl+Shift 点击 wikilink 时，在浮动窗口中预览链接的文件。"
   }
 }

@@ -10,5 +10,9 @@
   "useInFileExplorer": {
     "name": "Im Dateimanager verwenden",
     "desc": "Klicke auf die Datei `[[name]].md`, um `name.md` zu öffnen"
+  },
+  "useFloatingView": {
+    "name": "Vorschau im schwebenden Fenster",
+    "desc": "Strg+Umschalt+Klick auf einen Wikilink zeigt die verlinkte Datei in einem schwebenden Fenster."
   }
 }

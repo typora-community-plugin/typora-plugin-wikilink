@@ -7,17 +7,20 @@ import { WikilinkRenderer } from './features/renderer'
 import { WikilinkStyleToggler } from './features/style-toggler'
 import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
-import { isWikiLink } from './utils'
+import { FloatingView } from './features/floating-view'
+import { isWikiLink, parseWikiLink } from './utils'
 import Locale from './locales/lang.en.json'
 
 
 interface WikilinkSettings {
   useSuggest: boolean
+  useFloatingView: boolean
   useInFileExplorer: boolean
 }
 
 const DEFAULT_SETTINGS: WikilinkSettings = {
   useSuggest: false,
+  useFloatingView: false,
   useInFileExplorer: false,
 }
 
@@ -43,6 +46,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     this.addChild(new WikilinkStyleToggler(this))
     this.addChild(new UseSuggest(this.app, this))
     this.addChild(new UseInFileExplorer(this))
+    this.addChild(new FloatingView(this))
 
     this.registerSettingTab(new WikilinkSettingTab(this))
 
@@ -96,10 +100,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
       return
     }
 
-    // handle: displayName
-    wikiLink = wikiLink.slice(2, -2).split('|')[0].trim()
-
-    const [file, anchor] = wikiLink.split('#')!
+    const { file, anchor } = parseWikiLink(wikiLink)
 
     // handle: fileName
     if (file) {

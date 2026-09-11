@@ -29,6 +29,17 @@ export class WikilinkSettingTab extends SettingTab {
       })
     })
 
+    this.addSetting(setting => {
+      setting.addName(t.useFloatingView.name)
+      setting.addDescription(t.useFloatingView.desc)
+      setting.addCheckbox(checkbox => {
+        checkbox.checked = plugin.settings.get('useFloatingView')
+        checkbox.onclick = () => {
+          plugin.settings.set('useFloatingView', checkbox.checked)
+        }
+      })
+    })
+
     this.addSettingTitle(t.headingAdditional)
     this.addSetting(setting => {
       setting.addName(t.useInFileExplorer.name)

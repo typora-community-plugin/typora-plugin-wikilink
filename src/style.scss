@@ -1,12 +1,13 @@
-.typ-wikilink-preview {
-  position: absolute;
-  width: 400px;
-  max-height: 350px;
+.typ-workspace-floating.wikilink-preview {
+  display: flex;
+  flex-direction: column;
+  padding: 36px 0px 12px;
 
-  padding: 0 .5rem;
-  overflow-x: scroll;
-
-  border-radius: .25rem;
-  background: white;
-  box-shadow: 1px 1px 1px 2px #ccc;
+  .wikilink-preview__content {
+    flex: 1;
+    min-height: 0;
+    max-height: 70vh;
+    padding: 1rem;
+    overflow-y: auto;
+  }
 }

@@ -10,5 +10,9 @@
   "useInFileExplorer": {
     "name": "Use in file explorer",
     "desc": "Click file `[[name]].md` will open `name.md`"
+  },
+  "useFloatingView": {
+    "name": "Floating view preview",
+    "desc": "Ctrl+Shift+click a wikilink to preview the linked file in a floating view."
   }
 }
