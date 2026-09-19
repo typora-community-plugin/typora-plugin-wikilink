@@ -16,5 +16,7 @@ Supports wikilinks like `[[text]]`.
 ## Preview
 
 | Jump                         | Floating View                          |
-|:---------------------------:|:--------------------------------------:|
-| ![](./docs/assets/jump.gif) | ![](./docs/assets/floating-view.gif)   |
+ |:---------------------------:|:--------------------------------------:|
+ | ![](./docs/assets/jump.gif) | ![](./docs/assets/floating-view.gif)   |
+ | Embedded File                |                                        |
+ | ![](./docs/assets/embeded-md.gif) |                                    |
