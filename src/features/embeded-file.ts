@@ -1,12 +1,12 @@
 import { app, Component, fs, HtmlPostProcessor, Notice, path } from "@typora-community-plugin/core"
 import type WikilinkPlugin from "src/main"
-import { parseWikiLink } from "src/utils"
+import { extractSection, parseWikiLink } from "src/utils"
 
 
 /** 编辑器里 HTML block 的容器选择器 */
 const HTMLBLOCK_CONTAINER_SELECTOR = '.md-htmlblock-container'
 /** 渲染出的文件内容预览的类名 */
-const EMBED_PREVIEW_CLASS = 'wikilink-embed__preview'
+const EMBED_PREVIEW_CLASS = 'typ-wikilink-embed__preview'
 /** dataset 键（DOM 属性为 data-wikilink-embed-source），用于幂等控制 */
 const EMBED_SOURCE_ATTR = 'wikilinkEmbedSource'
 /** 匹配整块内容恰为 `![[...]]` 的 HTML block */
@@ -40,7 +40,7 @@ export class EmbededFile extends Component {
           const matched = src.match(WIKILINK_EMBED_RE)
           if (!matched) return
 
-          const { file } = parseWikiLink('[[' + matched[1] + ']]')
+          const { file, anchor } = parseWikiLink('[[' + matched[1] + ']]')
           if (!file) return
 
           const relpath = plugin.cacher.match(file)
@@ -57,6 +57,8 @@ export class EmbededFile extends Component {
               if (!el.isConnected) return
               if (el.dataset[EMBED_SOURCE_ATTR] !== src) return
 
+              const content = anchor ? (extractSection(md, anchor) ?? md) : md
+
               // 源文本隐藏，追加预览容器后渲染文件内容
               sourceEl.style.display = 'none'
 
@@ -65,10 +67,10 @@ export class EmbededFile extends Component {
               el.append(previewEl)
 
               try {
-                app.features.markdownRenderer.renderTo(md, previewEl)
+                app.features.markdownRenderer.renderTo(content, previewEl)
               }
               catch {
-                previewEl.textContent = md
+                previewEl.textContent = content
               }
             })
             .catch(() => {

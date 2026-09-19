@@ -11,3 +11,9 @@
     overflow-y: auto;
   }
 }
+
+.typ-wikilink-embed__preview.typ-markdown-preview {
+  margin-left: -0.3rem;
+  padding: 0 0 0 0.2rem;
+  border-left: 3px solid var(--primary-color);
+}
