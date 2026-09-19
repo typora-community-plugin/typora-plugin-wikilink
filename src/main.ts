@@ -4,6 +4,7 @@ import { editor } from 'typora'
 import { FileCache } from './file-cache'
 import { WikilinkSettingTab } from './setting-tab'
 import { WikilinkRenderer } from './features/renderer'
+import { EmbededFile } from './features/embeded-file'
 import { WikilinkStyleToggler } from './features/style-toggler'
 import { UseSuggest } from './features/use-suggest'
 import { UseInFileExplorer } from './features/use-in-file-explorer'
@@ -43,6 +44,7 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
 
     this.addChild(new WikilinkRenderer(this))
+    this.addChild(new EmbededFile(this))
     this.addChild(new WikilinkStyleToggler(this))
     this.addChild(new UseSuggest(this.app, this))
     this.addChild(new UseInFileExplorer(this))

@@ -13,7 +13,8 @@ export class WikilinkRenderer extends Component {
       when: 'preload',
       type: 'mdtext',
       process: md =>
-        md.replace(/(?<!\<a>)(\[\[[^\]]+\]\])(?!\<\/a>)/g, '<a>$1</a>')
+        md.replace(/(!\[\[[^\]]+\]\])(?<!<p>)(?!<\/p>)/g, '<p>$1</p>')
+          .replace(/(?<!\<a>)(?<!\!)(\[\[[^\]]+\]\])(?!\<\/a>)/g, '<a>$1</a>')
           .replace(/(\^\w{6})(?=\n|$)/g, '<a name="$1">$1</a>')
     })
     this.plugin.registerMarkdownPreProcessor({
@@ -22,6 +23,7 @@ export class WikilinkRenderer extends Component {
       process: md =>
         md.replace(/<a>(\[\[[^\]]+\]\])<\/a>/g, '$1')
           .replace(/<a name="(\^\w{6})">\1<\/a>/g, '$1')
+          .replace(/<p>(!\[\[[^\]]+\]\])<\/p>/g, '$1')
     })
   }
 }
