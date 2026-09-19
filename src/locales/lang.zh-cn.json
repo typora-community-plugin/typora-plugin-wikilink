@@ -14,5 +14,9 @@
   "useFloatingView": {
     "name": "浮动窗口预览",
     "desc": "按住 Ctrl+Shift 点击 wikilink 时，在浮动窗口中预览链接的文件。"
+  },
+  "useEmbededFile": {
+    "name": "嵌入文件",
+    "desc": "将 `![[文件]]` 或 `![[文件#标题]]` 渲染为所链接文件的内容。"
   }
 }

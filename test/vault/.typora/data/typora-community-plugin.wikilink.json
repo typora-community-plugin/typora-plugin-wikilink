@@ -2,6 +2,7 @@
   "version": 1,
   "settings": {
     "useSuggest": true,
-    "useInFileExplorer": true
+    "useInFileExplorer": true,
+    "useEmbededFile": true
   }
 }

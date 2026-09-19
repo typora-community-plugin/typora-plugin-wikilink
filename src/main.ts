@@ -17,12 +17,14 @@ interface WikilinkSettings {
   useSuggest: boolean
   useFloatingView: boolean
   useInFileExplorer: boolean
+  useEmbededFile: boolean
 }
 
 const DEFAULT_SETTINGS: WikilinkSettings = {
   useSuggest: false,
   useFloatingView: false,
   useInFileExplorer: false,
+  useEmbededFile: true,
 }
 
 export default class WikilinkPlugin extends Plugin<WikilinkSettings> {

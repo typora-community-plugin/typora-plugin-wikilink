@@ -14,5 +14,9 @@
   "useFloatingView": {
     "name": "Floating view preview",
     "desc": "Ctrl+Shift+click a wikilink to preview the linked file in a floating view."
+  },
+  "useEmbededFile": {
+    "name": "Embed file",
+    "desc": "Render `![[file]]` or `![[file#heading]]` as the content of the linked file."
   }
 }

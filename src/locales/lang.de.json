@@ -14,5 +14,9 @@
   "useFloatingView": {
     "name": "Vorschau im schwebenden Fenster",
     "desc": "Strg+Umschalt+Klick auf einen Wikilink zeigt die verlinkte Datei in einem schwebenden Fenster."
+  },
+  "useEmbededFile": {
+    "name": "Datei einbetten",
+    "desc": "Stelle `![[Datei]]` oder `![[Datei#Überschrift]]` als Inhalt der verlinkten Datei dar."
   }
 }

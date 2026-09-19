@@ -40,6 +40,17 @@ export class WikilinkSettingTab extends SettingTab {
       })
     })
 
+    this.addSetting(setting => {
+      setting.addName(t.useEmbededFile.name)
+      setting.addDescription(t.useEmbededFile.desc)
+      setting.addCheckbox(checkbox => {
+        checkbox.checked = plugin.settings.get('useEmbededFile')
+        checkbox.onclick = () => {
+          plugin.settings.set('useEmbededFile', checkbox.checked)
+        }
+      })
+    })
+
     this.addSettingTitle(t.headingAdditional)
     this.addSetting(setting => {
       setting.addName(t.useInFileExplorer.name)

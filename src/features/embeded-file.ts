@@ -1,4 +1,5 @@
 import { app, Component, fs, HtmlPostProcessor, Notice, path } from "@typora-community-plugin/core"
+import { editor } from "typora"
 import type WikilinkPlugin from "src/main"
 import { extractSection, parseWikiLink } from "src/utils"
 
@@ -16,6 +17,18 @@ export class EmbededFile extends Component {
 
   constructor(private plugin: WikilinkPlugin) {
     super()
+
+    plugin.register(
+      plugin.settings.onChange('useEmbededFile', (_, isEnabled) => {
+        isEnabled
+          ? this.load()
+          : this.unload()
+      }))
+  }
+
+  load() {
+    if (!this.plugin.settings.get('useEmbededFile')) return
+    super.load()
   }
 
   onload() {
@@ -80,5 +93,23 @@ export class EmbededFile extends Component {
             })
         },
       }))
+
+    // 开启后立刻对已打开文档生效，否则需等待下一次 edit
+    if (editor.writingArea)
+      app.features.markdownEditor.postProcessor.processAll()
+  }
+
+  onunload() {
+    document.querySelectorAll<HTMLElement>('.' + EMBED_PREVIEW_CLASS).forEach(previewEl => {
+      const container = previewEl.closest(HTMLBLOCK_CONTAINER_SELECTOR) as HTMLElement | null
+      previewEl.remove()
+
+      if (!container) return
+
+      delete container.dataset[EMBED_SOURCE_ATTR]
+
+      const sourceEl = container.querySelector<HTMLParagraphElement>(':scope > p')
+      if (sourceEl) sourceEl.style.display = ''
+    })
   }
 }
