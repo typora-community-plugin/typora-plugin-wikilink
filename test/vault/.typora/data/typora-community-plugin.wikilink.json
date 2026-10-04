@@ -3,6 +3,7 @@
   "settings": {
     "useSuggest": true,
     "useInFileExplorer": true,
-    "useEmbededFile": true
+    "useEmbededFile": true,
+    "useFloatingView": true
   }
 }

@@ -35,6 +35,8 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
   cacher = new FileCache()
 
+  floatingView!: FloatingView
+
   async onload() {
 
     this.registerSettings(
@@ -50,7 +52,8 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
     this.addChild(new WikilinkStyleToggler(this))
     this.addChild(new UseSuggest(this.app, this))
     this.addChild(new UseInFileExplorer(this))
-    this.addChild(new FloatingView(this))
+    this.floatingView = new FloatingView(this)
+    this.addChild(this.floatingView)
 
     this.registerSettingTab(new WikilinkSettingTab(this))
 
@@ -119,5 +122,9 @@ export default class WikilinkPlugin extends Plugin<WikilinkSettings> {
 
     // handle: anchor
     setTimeout(() => this.app.openLink('#' + anchor), 500)
+  }
+
+  preview(wikiLink: string) {
+    return this.floatingView.tryPreview(wikiLink)
   }
 }

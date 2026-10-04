@@ -1,3 +1,12 @@
+#write .typ-wikilink,
+.typ-workspace-leaf .typ-wikilink {
+  color: var(--primary-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .typ-workspace-floating.wikilink-preview {
   display: flex;
   flex-direction: column;

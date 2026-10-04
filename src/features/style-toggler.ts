@@ -1,7 +1,6 @@
 import { Component } from "@typora-community-plugin/core"
 import { editor, isInputComponent } from "typora"
 import type WikilinkPlugin from "src/main"
-import { isWikiLink } from "src/utils"
 
 
 export class WikilinkStyleToggler extends Component {
@@ -17,33 +16,50 @@ export class WikilinkStyleToggler extends Component {
       title: this.plugin.i18n.t.commandToggle,
       scope: 'editor',
       hotkey: 'Alt+Ctrl+K',
-      callback: toggleWikilink,
+      callback: () => this.toggleWikilinkStyle(),
     })
   }
-}
 
-function toggleWikilink() {
-  if (isInputComponent(document.activeElement)) return
+  private toggleWikilinkStyle() {
+    if (isInputComponent(document.activeElement)) return
 
-  const selected = document.getSelection()!.anchorNode!.parentElement!.parentElement
-  if (
-    isWikiLinkEl(selected) ||
-    isWikiLinkEl(selected!.children[1] as HTMLElement)
-  ) {
-    editor.selection.selectPhrase()
-    const selectedText = document.getSelection()!.toString()
-    const [, text] = selectedText.match(/<a>\[\[([^<]+)\]\]<\/a>/) ?? []
-    editor.UserOp.pasteHandler(editor, text, false)
-  }
-  else {
     const range = editor.selection.getRangy()
     if (range.collapsed) editor.selection.selectWord()
-    const selectedText = document.getSelection()!.toString()
-    const html = `<a>[[${selectedText}]]</a>`
-    editor.UserOp.pasteHandler(editor, html, true)
-  }
-}
+    this.includeBrackets()
 
-function isWikiLinkEl(el: HTMLElement | null) {
-  return el && el.tagName === 'A' && isWikiLink(el.innerText)
+    const selectedText = document.getSelection()?.toString() ?? ''
+    if (this.isInWikilink() || selectedText.startsWith('[[')) {
+      editor.UserOp.pasteHandler(editor, selectedText.replace(/^\[\[|\]\]$/g, ''), false)
+    }
+    else {
+      editor.UserOp.pasteHandler(editor, `[[${selectedText}]]`, true)
+    }
+  }
+
+  private includeBrackets() {
+    const sel = document.getSelection()
+    if (!sel || sel.rangeCount === 0) return
+    const range = sel.getRangeAt(0)
+
+    const startText = range.startContainer.nodeValue
+    if (typeof startText === 'string' && startText.slice(range.startOffset - 2, range.startOffset) === '[[')
+      range.setStart(range.startContainer, range.startOffset - 2)
+
+    const endText = range.endContainer.nodeValue
+    if (typeof endText === 'string' && endText.slice(range.endOffset, range.endOffset + 2) === ']]')
+      range.setEnd(range.endContainer, range.endOffset + 2)
+
+    sel.removeAllRanges()
+    sel.addRange(range)
+  }
+
+  private isInWikilink() {
+    let el: Node | null = document.getSelection()?.anchorNode ?? null
+    while (el) {
+      const classList = (el as Element).classList
+      if (classList?.contains('typ-wikilink')) return true
+      el = el.parentNode
+    }
+    return false
+  }
 }

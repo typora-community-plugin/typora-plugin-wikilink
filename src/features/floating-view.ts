@@ -1,5 +1,4 @@
-import { app, Component, decorate, fs, html, Notice, path, WorkspaceLeaf, WorkspaceView } from "@typora-community-plugin/core"
-import { editor } from "typora"
+import { app, Component, fs, html, Notice, path, WorkspaceLeaf, WorkspaceView } from "@typora-community-plugin/core"
 import type WikilinkPlugin from "../main"
 import { isWikiLink, parseWikiLink } from "../utils"
 
@@ -38,14 +37,6 @@ export class FloatingView extends Component {
         new WikilinkPreviewView(leaf, this.plugin)))
 
     this.registerDomEvent(document, 'mousedown', this.onMousedown, { capture: true })
-    this.registerDomEvent(document, 'click', this.onClick, { capture: true })
-
-    this.register(
-      decorate(editor, 'tryOpenLink', fn => ($a: JQuery, param1?: boolean) => {
-        if (this.isCtrlShiftPressed && isWikilinkAnchor($a) && this.preview($a))
-          return
-        return fn($a, param1)
-      }))
   }
 
   onunload() {
@@ -68,28 +59,20 @@ export class FloatingView extends Component {
     const target = e.target
     if (target instanceof Element) {
       if (target.closest('.typ-workspace-floating')) return
-      if (this.isCtrlShiftPressed && isWikilinkAnchor($(target).closest('a')))
+      if (this.isCtrlShiftPressed && findWikilinkText(target))
         e.preventDefault()
     }
     this.closeAll()
   }
 
-  private onClick = (e: MouseEvent) => {
-    if (!((e.ctrlKey || e.metaKey) && e.shiftKey)) return
-    if (!(e.target instanceof Element)) return
-
-    const $a = $(e.target).closest('a')
-    if (!isWikilinkAnchor($a)) return
-    if (!this.preview($a)) return
-
-    e.preventDefault()
-    e.stopPropagation()
+  tryPreview(wikiLink: string) {
+    return this._loaded && this.preview(wikiLink)
   }
 
-  private preview($a: JQuery) {
+  private preview(wikiLink: string) {
     if (!app.commands.commandMap[OPEN_FLOATING_LEAF]) return false
 
-    const { file } = parseWikiLink($a.text())
+    const { file } = parseWikiLink(wikiLink)
     if (!file) return false
 
     const now = Date.now()
@@ -128,8 +111,12 @@ export class FloatingView extends Component {
 }
 
 
-function isWikilinkAnchor($a: JQuery) {
-  return $a.length > 0 && !$a.attr('href') && isWikiLink($a.text())
+function findWikilinkText(target: Element): string | null {
+  const el = target.closest('.typ-wikilink, a')
+  if (!el) return null
+  if (el instanceof HTMLAnchorElement && el.getAttribute('href')) return null
+  const text = el.textContent ?? ''
+  return isWikiLink(text) ? text : null
 }
 
 
