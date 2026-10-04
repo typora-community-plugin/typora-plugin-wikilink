@@ -5,7 +5,7 @@
   "author": "plylrnsdy",
   "authorUrl": "https://github.com/plylrnsdy",
   "repo": "typora-community-plugin/typora-plugin-wikilink",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "minAppVersion": "1.5.0",
   "minCoreVersion": "2.10.42",
   "platforms": ["win32", "linux", "darwin"]
