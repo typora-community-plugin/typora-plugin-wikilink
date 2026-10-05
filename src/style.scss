@@ -1,9 +1,12 @@
-#write .typ-wikilink,
-.typ-workspace-leaf .typ-wikilink {
-  color: var(--primary-color);
+#write,
+.typ-workspace-leaf,
+.typ-workspace-floating {
+  .typ-wikilink {
+    color: var(--primary-color);
 
-  &:hover {
-    text-decoration: underline;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
